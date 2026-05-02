@@ -386,6 +386,13 @@
                         </select>
                     </div>
                 </div>
+                
+                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--border); display: flex; gap: 1rem">
+                    <button type="button" onclick="exportNilaiTemplate()" id="btn-export-nilai" style="background: #0d9488; flex: 1" disabled>📥 Export Template Nilai (Per Kelas)</button>
+                    <button type="button" onclick="document.getElementById('import-nilai-excel').click()" style="background: #1d4ed8; flex: 1">📤 Import Nilai Excel</button>
+                    <input type="file" id="import-nilai-excel" hidden accept=".xlsx, .xls" onchange="importNilaiExcel(event)">
+                </div>
+
                 <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border)">
                 <div id="grades-container">
                     <p style="color: var(--text-muted)">Pilih siswa terlebih dahulu untuk mengisi nilai.</p>
