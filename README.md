@@ -37,6 +37,6 @@ Setelah membuka aplikasi, Anda akan diminta untuk melakukan aktivasi identitas:
 
 ---
 **Butuh bantuan atau nomor seri?**
-Hubungi Admin di WhatsApp: [0811-5500-5320](https://wa.me/6281155005320?text=Halo%20Admin%20BarRafi%20EduRaport,%20saya%20butuh%20bantuan%20aktivasi.)
+Hubungi Admin di WhatsApp: [+6281155005320](https://wa.me/6281155005320?text=Halo%20Admin%20BarRafi%20EduRaport,%20saya%20butuh%20bantuan%20aktivasi.)
 
 *Dikembangkan untuk kemajuan pendidikan Indonesia.* 🇮🇩
