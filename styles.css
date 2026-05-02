@@ -1,0 +1,249 @@
+:root {
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary: #64748b;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --radius: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: var(--bg-card);
+    border-right: 1px solid var(--border);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: fixed;
+    height: 100vh;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    color: var(--primary);
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: var(--text-muted);
+    border-radius: var(--radius);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.nav-item:hover, .nav-item.active {
+    background: #eef2ff;
+    color: var(--primary);
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 260px;
+    padding: 2rem;
+    width: calc(100% - 260px);
+}
+
+header {
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 1.875rem;
+    font-weight: 800;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    margin-bottom: 1.5rem;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Form Elements */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+}
+
+button {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: var(--primary-hover);
+}
+
+button:disabled {
+    background: #e2e8f0;
+    cursor: not-allowed;
+    color: #94a3b8; /* Warna teks abu-abu agar tetap terlihat tapi redup */
+}
+
+/* Table Style */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    background: #f1f5f9;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    color: var(--text-muted);
+}
+
+/* Report View (Printable) */
+.report-page {
+    background: white;
+    width: 210mm; /* A4 width */
+    min-height: 297mm;
+    margin: 0 auto;
+    padding: 10mm 15mm; /* Dikurangi dari 20mm */
+    color: black;
+}
+
+.report-header {
+    text-align: center;
+    border-bottom: 2px solid black;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Dikurangi dari 2rem */
+}
+
+.report-title {
+    text-transform: uppercase;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+.student-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem; /* Dikurangi dari 2rem */
+    font-size: 0.85rem;
+}
+
+.info-item {
+    display: flex;
+    gap: 1rem;
+}
+
+.info-label {
+    width: 120px;
+    font-weight: 600;
+}
+
+.report-table {
+    border: 1px solid black;
+}
+
+.report-table th, .report-table td {
+    border: 1px solid black;
+    padding: 0.35rem; /* Dikurangi dari 0.5rem */
+    font-size: 0.8rem; /* Dikurangi dari 0.85rem */
+}
+
+@media print {
+    .sidebar, .no-print {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 0;
+        width: 100%;
+    }
+    @page {
+        size: A4;
+        margin: 10mm;
+    }
+    .report-page {
+        box-shadow: none;
+        margin: 0 auto !important;
+        border: none;
+    }
+    /* Hanya ganti halaman jika BUKAN elemen terakhir */
+    .report-page:not(:last-child) {
+        page-break-after: always;
+    }
+}
+
+.hidden {
+    display: none;
+}

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BarRafi EduRaport - Kurikulum Merdeka SD</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Overlay Aktivasi */
+        #activation-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+        .activation-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body onload="checkActivation()">
+
+    <!-- Modal Aktivasi Pertama Kali -->
+    <div id="activation-overlay" class="hidden">
+        <div class="activation-card">
+            <div style="font-size: 3rem; margin-bottom: 1rem">🛡️</div>
+            <h2 style="margin-bottom: 0.5rem">Aktivasi BarRafi EduRaport</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem">Silakan masukkan identitas Wali Kelas untuk mengaktifkan lisensi aplikasi ini.</p>
+            
+            <div style="text-align: left; margin-bottom: 1rem">
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem">1. Nama Lengkap & Gelar</label>
+                <input type="text" id="setup-guru-name" placeholder="Contoh: Hidayatullah, S.Pd." style="width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem">
+            </div>
+
+            <div style="text-align: left; margin-bottom: 1rem">
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem">2. Device ID Anda</label>
+                <input type="text" id="setup-device-id" readonly style="width: 100%; padding: 0.75rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: monospace; font-weight: 800; color: var(--primary); font-size: 1rem; text-align: center">
+            </div>
+
+            <button onclick="requestSerialWA()" style="width: 100%; padding: 0.75rem; background: #25d366; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1.5rem; font-size: 0.9rem">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+                Kirim Data ke Admin via WhatsApp
+            </button>
+
+            <div style="text-align: left; margin-bottom: 2rem">
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem">3. Masukkan Nomor Seri Aktivasi</label>
+                <input type="text" id="setup-serial-key" placeholder="Contoh: A1B2-C3D4" style="width: 100%; padding: 0.75rem; border: 2px solid #4f46e5; border-radius: 8px; font-family: monospace; font-size: 1.1rem; text-align: center; color: var(--primary)">
+            </div>
+            
+            <button onclick="activateApp()" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3)">
+                Aktifkan Lisensi Sekarang
+            </button>
+            <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #ef4444; font-weight: 600">⚠️ Perhatian: Data ini bersifat permanen dan tidak dapat diubah setelah diaktifkan.</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar no-print">
+        <div class="logo-container">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
+            <span>BarRafi EduRaport</span>
+        </div>
+        <nav class="nav-links">
+            <div class="nav-item active" onclick="showView('dashboard')">
+                <span>🏠 Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showView('input-siswa')">
+                <span>👤 Tambah Data Siswa</span>
+            </div>
+            <div class="nav-item" onclick="showView('input-nilai', true)">
+                <span>📝 Input Nilai</span>
+            </div>
+            <div class="nav-item" onclick="showView('input-p5', true)">
+                <span>💡 Proyek P5</span>
+            </div>
+            <div class="nav-item" onclick="showView('preview-raport')">
+                <span>📄 Cetak Raport</span>
+            </div>
+        </nav>
+
+        <div style="margin-top: auto; padding-top: 2rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border)">
+            <p>Versi 1.0.0</p>
+            <p style="margin-top: 0.5rem">Part of <a href="https://untukkita.id" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700">untukkita.id</a> Group</p>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Dashboard View -->
+        <section id="dashboard" class="view">
+            <header>
+                <h1>Selamat Datang di BarRafi EduRaport</h1>
+                <p style="color: var(--text-muted)">Aplikasi Manajemen Raport Kurikulum Merdeka SD</p>
+            </header>
+            
+            <div class="grid">
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem">Statistik Cepat</h3>
+                    <div style="display: flex; gap: 1rem">
+                        <div style="flex: 1; text-align: center; padding: 1rem; background: #f1f5f9; border-radius: 8px">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary)" id="count-siswa">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted)">Siswa Terdaftar</div>
+                        </div>
+                        <div style="flex: 1; text-align: center; padding: 1rem; background: #f1f5f9; border-radius: 8px">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #10b981">12</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted)">Mata Pelajaran</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem">Manajemen Database (Excel)</h3>
+                    <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem">Gunakan file Excel untuk backup atau pindah perangkat.</p>
+                    <div style="display: flex; flex-direction: column; gap: 0.75rem">
+                        <button onclick="exportAllDataExcel()" style="background: var(--secondary)">📥 Export Database Lengkap</button>
+                        <div style="position: relative">
+                            <button style="background: #10b981; width: 100%">📤 Import dari Excel</button>
+                            <input type="file" accept=".xlsx, .xls" onchange="importAllDataExcel(event)" style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-bottom: 1rem">Panduan Cepat</h3>
+                    <ul style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; list-style: none; padding-left: 0">
+                        <li style="margin-bottom: 0.5rem">1. Lengkapi data profil siswa di menu <b>Tambah Data Siswa</b>.</li>
+                        <li style="margin-bottom: 0.5rem">2. Masukkan nilai akademik dan capaian kompetensi.</li>
+                        <li style="margin-bottom: 0.5rem">3. Isi catatan proyek P5 di menu <b>Proyek P5</b>.</li>
+                        <li style="margin-bottom: 0.5rem">4. Preview dan cetak raport PDF.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 2rem">
+                <h3 style="margin-bottom: 1.5rem">Daftar Siswa Aktif</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NISN</th>
+                            <th>Nama Lengkap</th>
+                            <th>Kelas</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="student-list-table">
+                        <!-- Data will be populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Input Siswa View -->
+        <section id="input-siswa" class="view hidden">
+            <header>
+                <h1>Tambah Data Peserta Didik</h1>
+            </header>
+            <div class="card">
+                <form id="form-siswa">
+                    <input type="hidden" id="siswa-id">
+                    <!-- Excel Buttons at Top -->
+                    <div style="margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); display: flex; gap: 1rem">
+                        <button type="button" onclick="exportExcelTemplate()" style="background: #0d9488; flex: 1">📥 Export Template Excel</button>
+                        <button type="button" onclick="document.getElementById('import-excel').click()" style="background: #1d4ed8; flex: 1">📤 Import Data Excel</button>
+                        <input type="file" id="import-excel" hidden accept=".xlsx, .xls" onchange="importExcelData(event)">
+                    </div>
+                    <div class="grid">
+                        <div class="form-group">
+                            <label>Nama Lengkap</label>
+                            <input type="text" id="siswa-nama" placeholder="Contoh: El Barra" required>
+                        </div>
+                        <div class="form-group">
+                            <label>NISN</label>
+                            <input type="text" id="siswa-nisn" placeholder="Nomor Induk Siswa Nasional" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sekolah</label>
+                            <input type="text" id="siswa-sekolah" value="SD Negeri Merdeka 01" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kelas</label>
+                            <select id="siswa-kelas">
+                                <option value="1">Kelas 1 (Fase A)</option>
+                                <option value="2">Kelas 2 (Fase A)</option>
+                                <option value="3">Kelas 3 (Fase B)</option>
+                                <option value="4">Kelas 4 (Fase B)</option>
+                                <option value="5">Kelas 5 (Fase C)</option>
+                                <option value="6">Kelas 6 (Fase C)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Semester</label>
+                            <select id="siswa-semester">
+                                <option value="1">Ganjil</option>
+                                <option value="2">Genap</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tahun Pelajaran</label>
+                            <input type="text" id="siswa-tp" value="2024/2025" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nama Orang Tua/Wali</label>
+                            <input type="text" id="siswa-ortu" placeholder="Nama Bapak/Ibu" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nomor HP Orang Tua</label>
+                            <input type="tel" id="siswa-hp" placeholder="Contoh: 0812xxx" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-save-siswa">Simpan Data Siswa</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Input Nilai View -->
+        <section id="input-nilai" class="view hidden">
+            <header>
+                <h1>Input Nilai & Capaian</h1>
+            </header>
+            <div class="card">
+                <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 1rem">
+                    <div class="form-group">
+                        <label>Pilih Kelas</label>
+                        <select id="filter-kelas-nilai" onchange="populateStudentSelects('nilai')">
+                            <option value="">Semua Kelas</option>
+                            <option value="1">Kelas 1</option>
+                            <option value="2">Kelas 2</option>
+                            <option value="3">Kelas 3</option>
+                            <option value="4">Kelas 4</option>
+                            <option value="5">Kelas 5</option>
+                            <option value="6">Kelas 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Siswa</label>
+                        <select id="select-siswa-nilai" onchange="handleStudentSelect('nilai')">
+                            <option value="">-- Pilih Siswa --</option>
+                        </select>
+                    </div>
+                </div>
+                <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border)">
+                <div id="grades-container">
+                    <p style="color: var(--text-muted)">Pilih siswa terlebih dahulu untuk mengisi nilai.</p>
+                </div>
+
+                <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border)">
+                
+                <div id="extra-container" class="hidden">
+                    <h3 style="margin-bottom: 1rem">Data Tambahan (Absensi & Ekskul)</h3>
+                    <div class="grid">
+                        <div class="card" style="box-shadow: none; border: 1px solid var(--border)">
+                            <h4>Ketidakhadiran</h4>
+                            <div class="form-group"><label>Sakit</label><input type="number" id="abs-sakit" placeholder="0"></div>
+                            <div class="form-group"><label>Izin</label><input type="number" id="abs-izin" placeholder="0"></div>
+                            <div class="form-group"><label>Alpa</label><input type="number" id="abs-alpa" placeholder="0"></div>
+                        </div>
+                        <div class="card" style="box-shadow: none; border: 1px solid var(--border)">
+                            <h4>Ekstrakurikuler</h4>
+                            <div class="form-group"><label>Nama Ekskul</label><input type="text" id="ekskul-nama" placeholder="Contoh: Pramuka"></div>
+                            <div class="form-group"><label>Keterangan</label><textarea id="ekskul-desc" rows="2" placeholder="Contoh: Aktif mengikuti kegiatan..."></textarea></div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="box-shadow: none; border: 1px solid var(--border); margin-top: 1rem">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem">
+                            <h4 style="margin: 0">Catatan Wali Kelas (Smart Analysis)</h4>
+                            <button onclick="generateSmartAnalysis()" style="background: var(--primary); padding: 5px 12px; font-size: 0.75rem">🪄 Analisa Otomatis dari Nilai</button>
+                        </div>
+                        <div class="form-group" style="margin-top: 1rem">
+                            <label>1. Prestasi & Apresiasi</label>
+                            <textarea id="catatan-prestasi" rows="2" placeholder="Analisa otomatis akan muncul di sini..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>2. Motivasi Belajar</label>
+                            <textarea id="catatan-motivasi" rows="2" placeholder="Analisa otomatis akan muncul di sini..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>3. Saran & Bimbingan</label>
+                            <textarea id="catatan-bimbingan" rows="2" placeholder="Analisa otomatis akan muncul di sini..."></textarea>
+                        </div>
+                    </div>
+
+                    <button id="btn-save-extra" onclick="saveAdditionalData()" style="width: 100%; background: var(--secondary); margin-top: 1rem" disabled>Simpan Data Tambahan</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Input P5 View -->
+        <section id="input-p5" class="view hidden">
+            <header>
+                <h1>Proyek Penguatan Profil Pelajar Pancasila (P5)</h1>
+            </header>
+            <div class="card">
+                <div class="grid" style="grid-template-columns: 1fr 2fr; gap: 1rem">
+                    <div class="form-group">
+                        <label>Pilih Kelas</label>
+                        <select id="filter-kelas-p5" onchange="populateStudentSelects('p5'); loadP5();">
+                            <option value="">Semua Kelas</option>
+                            <option value="1">Kelas 1</option>
+                            <option value="2">Kelas 2</option>
+                            <option value="3">Kelas 3</option>
+                            <option value="4">Kelas 4</option>
+                            <option value="5">Kelas 5</option>
+                            <option value="6">Kelas 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Siswa</label>
+                        <select id="select-siswa-p5" onchange="handleStudentSelect('p5')">
+                            <option value="">-- Pilih Siswa --</option>
+                        </select>
+                    </div>
+                </div>
+                <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid var(--border)">
+                
+                <div id="p5-form-container" class="hidden">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem">
+                        <h4 id="p5-header-title">Data Proyek & Pencapaian</h4>
+                        <button onclick="addP5ProjectRow()" style="padding: 0.5rem 1rem; font-size: 0.75rem">+ Tambah Proyek Baru</button>
+                    </div>
+
+                    <table class="report-table" style="width: 100%; background: white">
+                        <thead>
+                            <tr style="background: #f8fafc">
+                                <th width="40%">Judul Proyek (Kelas)</th>
+                                <th>Pencapaian (Siswa)</th>
+                                <th width="50">Hapus</th>
+                            </tr>
+                        </thead>
+                        <tbody id="p5-rows-container">
+                            <!-- Rows will be rendered here -->
+                        </tbody>
+                    </table>
+                    
+                    <button id="btn-save-p5" onclick="saveP5()" style="width: 100%; margin-top: 1.5rem" disabled>Simpan Perubahan P5</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Preview Raport View -->
+        <section id="preview-raport" class="view hidden">
+            <header class="no-print">
+                <h1>Cetak Raport Masal</h1>
+                <p>Pilih kelas dan siswa yang ingin dicetak sekaligus.</p>
+            </header>
+
+            <div class="card no-print" style="margin-bottom: 1.5rem">
+                <div class="grid" style="grid-template-columns: 1.5fr 1fr 1fr; gap: 1rem; align-items: flex-start">
+                    <div class="form-group" style="margin-bottom: 0">
+                        <label>Pilih Kelas</label>
+                        <select id="filter-kelas-cetak" onchange="loadPrintSiswaList()">
+                            <option value="">-- Pilih Kelas --</option>
+                            <option value="1">Kelas 1</option>
+                            <option value="2">Kelas 2</option>
+                            <option value="3">Kelas 3</option>
+                            <option value="4">Kelas 4</option>
+                            <option value="5">Kelas 5</option>
+                            <option value="6">Kelas 6</option>
+                        </select>
+                        <div style="margin-top: 0.5rem; display: flex; align-items: center; background: #f8fafc; padding: 0.4rem; border-radius: 8px; border: 1px solid var(--border)">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; cursor: pointer; color: var(--text-main); font-weight: 600; width: 100%">
+                                <input type="checkbox" id="show-rank" style="width: 14px; height: 14px"> Tampilkan Peringkat
+                            </label>
+                        </div>
+                    </div>
+                    <div style="padding-top: 1.6rem">
+                        <button onclick="renderMultiReport()" style="background: var(--primary); width: 100%; margin: 0">👁️ Siapkan Preview</button>
+                    </div>
+                    <div style="padding-top: 1.6rem">
+                        <button id="btn-print-final" onclick="window.print()" style="background: #10b981; width: 100%; margin: 0" disabled>🖨️ Cetak ke PDF</button>
+                    </div>
+                </div>
+
+                <div id="print-selection-container" style="margin-top: 1.5rem">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th width="50"><input type="checkbox" id="check-all-print" onclick="toggleAllPrint(this)"></th>
+                            <th width="150">NISN</th>
+                            <th>Nama Lengkap</th>
+                            <th width="100">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="print-siswa-list">
+                        <tr><td colspan="4" style="text-align:center">Pilih kelas terlebih dahulu.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Bagian Tanda Tangan (Muncul setelah Siapkan Preview) -->
+            <div id="signature-input-section" class="card no-print hidden" style="margin-top: 1.5rem; background: #f0fdf4; border: 1px solid #bbf7d0">
+                <h4 style="margin-bottom: 1rem">✍️ Atur Informasi Tanda Tangan</h4>
+                <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 1rem">
+                    <div class="form-group">
+                        <label>Tempat, Tanggal Raport</label>
+                        <input type="text" id="input-sign-date" placeholder="Contoh: Jakarta, 20 Juni 2025" oninput="updateAllSignatures()">
+                    </div>
+                    <div class="form-group">
+                        <label>Nama Wali Kelas (Terkunci)</label>
+                        <input type="text" id="input-sign-name" placeholder="Nama Lengkap & Gelar" disabled style="background: #f1f5f9; cursor: not-allowed; font-weight: 700; color: #1e293b">
+                    </div>
+                </div>
+                <p style="font-size: 0.75rem; color: #166534; margin-top: 0.5rem">ℹ️ Data di atas akan otomatis terupdate ke seluruh lembar raport di bawah.</p>
+            </div>
+            </div>
+
+            <!-- Area untuk menampung banyak raport -->
+            <div id="multi-report-container">
+                <!-- Raport-raport akan di-generate di sini -->
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
