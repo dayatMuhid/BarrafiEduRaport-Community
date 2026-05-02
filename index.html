@@ -75,29 +75,33 @@
     <aside class="sidebar no-print">
         <div class="logo-container">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"></path><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path><path d="M2 2l7.586 7.586"></path><circle cx="11" cy="11" r="2"></circle></svg>
-            <span>BarRafi EduRaport</span>
+            <span id="sidebar-guru-name">User Aktif</span>
         </div>
         <nav class="nav-links">
             <div class="nav-item active" onclick="showView('dashboard')">
                 <span>🏠 Dashboard</span>
             </div>
-            <div class="nav-item" onclick="showView('input-siswa')">
+            <div class="nav-item" onclick="showView('input-siswa', false, true)">
                 <span>👤 Tambah Data Siswa</span>
             </div>
-            <div class="nav-item" onclick="showView('input-nilai', true)">
+            <div class="nav-item" onclick="showView('input-nilai', true, true)">
                 <span>📝 Input Nilai</span>
             </div>
-            <div class="nav-item" onclick="showView('input-p5', true)">
+            <div class="nav-item" onclick="showView('input-p5', true, true)">
                 <span>💡 Proyek P5</span>
             </div>
-            <div class="nav-item" onclick="showView('preview-raport')">
+            <div class="nav-item" onclick="showView('preview-raport', false, true)">
                 <span>📄 Cetak Raport</span>
+            </div>
+            <div class="nav-item" onclick="showView('setup-sekolah', false, true)">
+                <span>⚙️ Pengaturan Sekolah</span>
             </div>
         </nav>
 
-        <div style="margin-top: auto; padding-top: 2rem; font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border)">
-            <p>Versi 1.0.0</p>
-            <p style="margin-top: 0.5rem">Part of <a href="https://untukkita.id" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700">untukkita.id</a> Group</p>
+        <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border)">
+            <p style="font-weight: 700; color: var(--primary); margin-bottom: 0.3rem; font-size: 0.85rem">BarRafi EduRaport</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted)">Versi 1.1.0</p>
+            <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted)">Part of <a href="https://untukkita.id" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700">untukkita.id</a> Group</p>
         </div>
     </aside>
 
@@ -107,63 +111,114 @@
         <!-- Dashboard View -->
         <section id="dashboard" class="view">
             <header>
-                <h1>Selamat Datang di BarRafi EduRaport</h1>
+                <h1>Selamat Datang Pahlawan Tanpa Tanda Jasa</h1>
                 <p style="color: var(--text-muted)">Aplikasi Manajemen Raport Kurikulum Merdeka SD</p>
             </header>
             
-            <div class="grid">
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem">Statistik Cepat</h3>
-                    <div style="display: flex; gap: 1rem">
-                        <div style="flex: 1; text-align: center; padding: 1rem; background: #f1f5f9; border-radius: 8px">
-                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary)" id="count-siswa">0</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted)">Siswa Terdaftar</div>
-                        </div>
-                        <div style="flex: 1; text-align: center; padding: 1rem; background: #f1f5f9; border-radius: 8px">
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #10b981">12</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted)">Mata Pelajaran</div>
-                        </div>
+            <!-- Top Row: Stats -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem">
+                <div class="card" style="display: flex; align-items: center; gap: 1rem; padding: 1.5rem">
+                    <div style="background: #eef2ff; color: #4f46e5; padding: 12px; border-radius: 12px; font-size: 1.5rem">👥</div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin: 0">Total Siswa</p>
+                        <h2 id="count-siswa" style="margin: 0; font-size: 1.5rem">0</h2>
                     </div>
                 </div>
-                
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem">Manajemen Database (Excel)</h3>
-                    <p style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 1rem">Gunakan file Excel untuk backup atau pindah perangkat.</p>
-                    <div style="display: flex; flex-direction: column; gap: 0.75rem">
-                        <button onclick="exportAllDataExcel()" style="background: var(--secondary)">📥 Export Database Lengkap</button>
-                        <div style="position: relative">
-                            <button style="background: #10b981; width: 100%">📤 Import dari Excel</button>
-                            <input type="file" accept=".xlsx, .xls" onchange="importAllDataExcel(event)" style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer">
-                        </div>
+                <div class="card" style="display: flex; align-items: center; gap: 1rem; padding: 1.5rem">
+                    <div style="background: #f0fdf4; color: #10b981; padding: 12px; border-radius: 12px; font-size: 1.5rem">📚</div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin: 0">Mata Pelajaran</p>
+                        <h2 id="count-mapel" style="margin: 0; font-size: 1.5rem">0</h2>
                     </div>
                 </div>
-
-                <div class="card">
-                    <h3 style="margin-bottom: 1rem">Panduan Cepat</h3>
-                    <ul style="font-size: 0.875rem; color: var(--text-muted); line-height: 1.6; list-style: none; padding-left: 0">
-                        <li style="margin-bottom: 0.5rem">1. Lengkapi data profil siswa di menu <b>Tambah Data Siswa</b>.</li>
-                        <li style="margin-bottom: 0.5rem">2. Masukkan nilai akademik dan capaian kompetensi.</li>
-                        <li style="margin-bottom: 0.5rem">3. Isi catatan proyek P5 di menu <b>Proyek P5</b>.</li>
-                        <li style="margin-bottom: 0.5rem">4. Preview dan cetak raport PDF.</li>
-                    </ul>
+                <div class="card" style="display: flex; align-items: center; gap: 1rem; padding: 1.5rem">
+                    <div style="background: #fff7ed; color: #f59e0b; padding: 12px; border-radius: 12px; font-size: 1.5rem">🏫</div>
+                    <div>
+                        <p style="font-size: 0.75rem; color: #64748b; font-weight: 600; margin: 0">Status Lisensi</p>
+                        <h2 style="margin: 0; font-size: 1rem; color: #10b981">Aktif ✓</h2>
+                    </div>
                 </div>
             </div>
 
-            <div class="card" style="margin-top: 2rem">
-                <h3 style="margin-bottom: 1.5rem">Daftar Siswa Aktif</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>NISN</th>
-                            <th>Nama Lengkap</th>
-                            <th>Kelas</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody id="student-list-table">
-                        <!-- Data will be populated by JS -->
-                    </tbody>
-                </table>
+            <!-- Student Table (Full Width) -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem">
+                    <h3 style="margin: 0">Daftar Siswa Aktif</h3>
+                    <div style="display: flex; gap: 0.5rem; width: 450px">
+                        <div style="position: relative; flex: 1">
+                            <input type="text" id="main-search-input" placeholder="Cari nama atau NISN..." style="padding: 0.6rem 1rem 0.6rem 2.2rem; font-size: 0.85rem; width: 100%; border-radius: 8px; border: 1.5px solid #e2e8f0; background: #f8fafc">
+                            <span style="position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: #94a3b8">🔍</span>
+                        </div>
+                        <button onclick="updateDashboard(document.getElementById('main-search-input').value)" style="background: var(--primary); padding: 0.6rem 1.2rem; font-size: 0.85rem; border-radius: 8px">Cari</button>
+                        <button onclick="resetSearch()" style="background: #64748b; padding: 0.6rem 1rem; font-size: 0.85rem; border-radius: 8px" title="Refresh/Reset">🔄</button>
+                    </div>
+                </div>
+                <div id="search-status" style="margin-bottom: 1rem; font-size: 0.8rem; color: var(--primary); font-weight: 600; display: none"></div>
+                <div style="overflow-x: auto">
+                    <table style="width: 100%">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center">NISN</th>
+                                <th style="text-align: center">NAMA LENGKAP</th>
+                                <th style="text-align: center">KELAS</th>
+                                <th style="text-align: center">AKSI</th>
+                            </tr>
+                        </thead>
+                        <tbody id="student-list-table">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- School Setup View -->
+        <section id="setup-sekolah" class="view hidden">
+            <header>
+                <h1>Pengaturan Sekolah</h1>
+                <p style="color: var(--text-muted)">Atur identitas sekolah dan mata pelajaran di sini.</p>
+            </header>
+            
+            <!-- Identitas Sekolah Card -->
+            <div class="card" style="max-width: 800px">
+                <h3 style="margin-bottom: 1rem">🏫 Identitas Sekolah</h3>
+                <div class="form-group">
+                    <label>Logo Sekolah (Tampil di Raport)</label>
+                    <input type="file" accept="image/*" onchange="handleLogoUpload(this)">
+                </div>
+                <div id="logo-preview" style="margin-top: 1rem; padding: 1rem; border: 2px dashed var(--border); border-radius: var(--radius); text-align: center; color: var(--text-muted)">
+                    Pratinjau Logo Sekolah
+                </div>
+            </div>
+
+            <!-- Manajemen Mata Pelajaran Card -->
+            <div class="card" style="max-width: 800px">
+                <h3 style="margin-bottom: 0.5rem">📚 Manajemen Mata Pelajaran</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem">Atur daftar mata pelajaran dan target kelas di sini.</p>
+                <div id="subject-list-manager" style="max-height: 400px; overflow-y: auto; padding-right: 0.5rem; margin-bottom: 1.5rem">
+                    <!-- Dinamis via script.js -->
+                </div>
+                <div class="form-group" style="display: flex; gap: 0.5rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border)">
+                    <input type="text" id="new-subject-name" placeholder="Nama Mapel Baru..." style="flex: 1; padding: 0.6rem; font-size: 0.85rem">
+                    <button onclick="addNewSubject()" style="background: var(--primary); padding: 0.6rem 1.2rem; font-size: 0.85rem; border-radius: 8px">Tambah</button>
+                </div>
+            </div>
+
+            <!-- Database Backup Card -->
+            <div class="card" style="max-width: 800px; background: #f8fafc; border: 1px solid #e2e8f0">
+                <div style="display: flex; justify-content: space-between; align-items: center">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem">💾 Manajemen Database (Excel)</h3>
+                        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem">Cadangkan seluruh data aplikasi ke file Excel.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem">
+                        <button onclick="exportAllDataExcel()" style="background: #10b981; padding: 0.6rem 1.2rem; font-size: 0.85rem">📥 Export Lengkap</button>
+                        <div style="position: relative">
+                            <button style="background: var(--primary); padding: 0.6rem 1.2rem; font-size: 0.85rem">📤 Import Database</button>
+                            <input type="file" id="import-excel-db" accept=".xlsx, .xls" onchange="importAllDataExcel(this)" style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer">
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -429,6 +484,59 @@
         </section>
 
     </main>
+
+    <!-- Modal Pilih Kelas Mapel -->
+    <div id="modal-mapel-kelas" class="hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div class="card" style="width: 440px; max-width: 95%; background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25)">
+            <h3 id="modal-mapel-title" style="margin-bottom: 1.5rem; color: var(--primary); font-size: 1.25rem; font-weight: 800; text-align: center">Target Kelas</h3>
+            <input type="hidden" id="modal-mapel-index">
+            
+            <div style="margin-bottom: 1.5rem">
+                <label style="display: flex; align-items: center; gap: 1rem; cursor: pointer; padding: 1rem; background: #f1f5f9; border-radius: 12px; transition: all 0.2s">
+                    <input type="checkbox" id="check-all-kelas" onchange="toggleAllKelasModal(this.checked)" style="width: 20px; height: 20px; accent-color: var(--primary)"> 
+                    <span style="font-weight: 700; color: var(--text-main)">Semua Kelas (Default)</span>
+                </label>
+                
+                <div style="display: flex; align-items: center; margin: 1.5rem 0">
+                    <div style="flex: 1; height: 1px; background: #e2e8f0"></div>
+                    <span style="padding: 0 1rem; font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase">Atau Pilih Spesifik</span>
+                    <div style="flex: 1; height: 1px; background: #e2e8f0"></div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem">
+                    <label class="modal-kelas-item" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s">
+                        <input type="checkbox" class="check-kelas-modal" value="1" onchange="toggleSpesifikKelas(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary)"> 
+                        <span style="font-size: 0.9rem; font-weight: 600">Kelas 1</span>
+                    </label>
+                    <label class="modal-kelas-item" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s">
+                        <input type="checkbox" class="check-kelas-modal" value="2" onchange="toggleSpesifikKelas(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary)"> 
+                        <span style="font-size: 0.9rem; font-weight: 600">Kelas 2</span>
+                    </label>
+                    <label class="modal-kelas-item" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s">
+                        <input type="checkbox" class="check-kelas-modal" value="3" onchange="toggleSpesifikKelas(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary)"> 
+                        <span style="font-size: 0.9rem; font-weight: 600">Kelas 3</span>
+                    </label>
+                    <label class="modal-kelas-item" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s">
+                        <input type="checkbox" class="check-kelas-modal" value="4" onchange="toggleSpesifikKelas(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary)"> 
+                        <span style="font-size: 0.9rem; font-weight: 600">Kelas 4</span>
+                    </label>
+                    <label class="modal-kelas-item" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s">
+                        <input type="checkbox" class="check-kelas-modal" value="5" onchange="toggleSpesifikKelas(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary)"> 
+                        <span style="font-size: 0.9rem; font-weight: 600">Kelas 5</span>
+                    </label>
+                    <label class="modal-kelas-item" style="display: flex; align-items: center; gap: 0.75rem; cursor: pointer; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 10px; transition: all 0.2s">
+                        <input type="checkbox" class="check-kelas-modal" value="6" onchange="toggleSpesifikKelas(this.checked)" style="width: 18px; height: 18px; accent-color: var(--primary)"> 
+                        <span style="font-size: 0.9rem; font-weight: 600">Kelas 6</span>
+                    </label>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem">
+                <button onclick="saveMapelKelas()" style="flex: 2; padding: 0.85rem; border-radius: 12px; font-size: 0.95rem">Simpan Perubahan</button>
+                <button onclick="closeMapelModal()" style="flex: 1; background: #f1f5f9; color: #64748b; padding: 0.85rem; border-radius: 12px; font-size: 0.95rem">Batal</button>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
