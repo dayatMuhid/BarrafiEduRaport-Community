@@ -5,7 +5,7 @@ Selamat datang di repository resmi **BarRafi EduRaport Community Edition**. Apli
 ## 📥 Cara Download & Instalasi
 
 Aplikasi ini bersifat **Portable** (tidak perlu instalasi rumit).
-1.  Klik tombol **[⬇️ Download BarRafi EduRaport v1.2.2](https://github.com/dayatMuhid/BarrafiEduRaport-Community/raw/main/BarRafi_EduRaport_v1.2.2_Community.zip)** untuk mengunduh versi terbaru.
+1.  Klik tombol **[⬇️ Download BarRafi EduRaport v1.2.3](https://github.com/dayatMuhid/BarrafiEduRaport-Community/raw/main/BarRafi_EduRaport_v1.2.3_Community.zip)** untuk mengunduh versi terbaru.
 2.  Ekstrak file ZIP tersebut di komputer Anda.
 3.  Buka file `index.html` menggunakan browser (Google Chrome atau Microsoft Edge direkomendasikan).
 
@@ -28,12 +28,10 @@ Setelah membuka aplikasi, Anda akan diminta untuk melakukan aktivasi identitas:
 -   ✅ **Raport Kurikulum Merdeka & P5**: Siap cetak standar nasional.
 -   ✅ **One-Page PDF**: Desain raport ringkas dan hemat kertas.
 
-## 📋 Changelog v1.2.2
-- Fitur Export/Import Nilai per kelas via Excel (TP-based).
-- Sistem Setup TP & CP dengan template resmi pemerintah (BSKAP 032/2024).
-- Tombol "Bedah CP jadi TP" untuk otomatis merumuskan tujuan pembelajaran.
-- Auto-generate deskripsi capaian kompetensi berbasis analisis CP.
-- Keterangan nilai P5 (BB, MB, BSH, SB) pada lembar raport.
+## 📋 Changelog v1.2.3
+- **Fitur Baru**: Menambahkan tanda tangan Kepala Sekolah pada cetak raport.
+- **Fitur Baru**: Input nama Kepala Sekolah di menu Pengaturan Sekolah.
+- Perbaikan format nomor WhatsApp Admin untuk aktivasi lisensi.
 
 ---
 **Butuh bantuan atau nomor seri?**
