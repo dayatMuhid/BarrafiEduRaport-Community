@@ -8,7 +8,7 @@ const sqlite3 = require('sqlite3').verbose();
 const { execSync } = require('child_process');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3005;
 
 app.use(cors());
 app.use(bodyParser.json({ limit: '50mb' })); // Support base64 school logo

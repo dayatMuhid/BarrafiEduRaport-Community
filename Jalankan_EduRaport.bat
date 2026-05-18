@@ -8,7 +8,7 @@ echo [1/2] Menjalankan Secure SQLite Backend...
 start /min cmd /c "npm start"
 timeout /t 2 /nobreak >nul
 echo [2/2] Membuka Aplikasi BarRafi EduRaport di Browser...
-start http://localhost:3000
+start http://localhost:3005
 echo.
 echo ===================================================
 echo   Aplikasi sukses dijalankan! 
