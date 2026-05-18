@@ -34,8 +34,14 @@ db.serialize(() => {
 const ENCRYPTION_SALT = 'BarRafiSaltEduRaport';
 const ALGORITHM = 'aes-256-cbc';
 
-// Fungsi untuk mendapatkan Motherboard UUID PC Windows secara unik
+// Fungsi untuk mendapatkan hardware ID unik Windows tanpa butuh hak Administrator
 function getMotherboardUuid() {
+    try {
+        const guid = execSync('powershell -Command "(Get-ItemProperty -Path \'HKLM:\\SOFTWARE\\Microsoft\\Cryptography\').MachineGuid"', { encoding: 'utf8' }).trim();
+        if (guid && guid.length > 5) return guid;
+    } catch (e) {
+        console.warn("Gagal membaca Registry MachineGuid, mencoba CimInstance...");
+    }
     try {
         const uuid = execSync('powershell -Command "(Get-CimInstance Win32_ComputerSystemProduct).UUID"', { encoding: 'utf8' }).trim();
         if (uuid && uuid.length > 5) return uuid;
