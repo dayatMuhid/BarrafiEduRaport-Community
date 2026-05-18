@@ -51,6 +51,26 @@ function decryptText(encryptedText) {
     }
 }
 
+// ==========================================
+// AUTO-SHUTDOWN HEARTBEAT SYSTEM
+// ==========================================
+let lastHeartbeat = Date.now();
+
+app.get('/api/heartbeat', (req, res) => {
+    lastHeartbeat = Date.now();
+    res.json({ success: true });
+});
+
+// Cek status keaktifan browser setiap 2 detik
+setInterval(() => {
+    if (Date.now() - lastHeartbeat > 8000) { // Toleransi 8 detik tanpa detak jantung dari browser
+        console.log("Browser ditutup. Mematikan server BarRafi EduRaport secara otomatis...");
+        db.close(() => {
+            process.exit(0);
+        });
+    }
+}, 2000);
+
 // Endpoint Ambil Seluruh Data Terdekripsi
 app.get('/api/db/get-all', (req, res) => {
     db.all(`SELECT key, value FROM secure_settings`, [], (err, rows) => {
