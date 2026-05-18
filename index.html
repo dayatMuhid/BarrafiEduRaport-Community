@@ -42,7 +42,7 @@
         <div class="activation-card">
             <div style="font-size: 3rem; margin-bottom: 1rem">🛡️</div>
             <h2 style="margin-bottom: 0.5rem">Aktivasi BarRafi EduRaport</h2>
-            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem">Silakan masukkan identitas Wali Kelas untuk mengaktifkan lisensi aplikasi ini.</p>
+            <p id="activation-desc" style="color: #64748b; font-size: 0.9rem; margin-bottom: 2rem">Silakan masukkan identitas Wali Kelas untuk mengaktifkan lisensi aplikasi ini.</p>
             
             <div style="text-align: left; margin-bottom: 1rem">
                 <label style="display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem">1. Nama Lengkap & Gelar</label>
@@ -67,6 +67,7 @@
             <button onclick="activateApp()" style="width: 100%; padding: 1rem; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3)">
                 Aktifkan Lisensi Sekarang
             </button>
+            <button id="btn-close-activation" onclick="closeActivationModal()" class="hidden" style="width: 100%; padding: 0.75rem; background: #e2e8f0; color: #475569; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95rem; margin-top: 0.75rem">Batal (Lanjutkan Trial)</button>
             <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #ef4444; font-weight: 600">⚠️ Perhatian: Data ini bersifat permanen dan tidak dapat diubah setelah diaktifkan.</p>
         </div>
     </div>
@@ -99,6 +100,9 @@
             <div class="nav-item" onclick="showView('setup-sekolah', false, true)">
                 <span>⚙️ Pengaturan Sekolah</span>
             </div>
+            <div class="nav-item hidden" id="sidebar-activate-btn" onclick="openActivationModal()" style="background: #fef3c7; border: 1px solid #fde68a; margin-top: 1rem">
+                <span style="color: #d97706; font-weight: 700">🔑 Aktifkan Lisensi</span>
+            </div>
         </nav>
 
         <div style="margin-top: auto; padding-top: 2rem; border-top: 1px solid var(--border)">
@@ -110,6 +114,18 @@
 
     <!-- Main Content -->
     <main class="main-content">
+        
+        <!-- Trial Banner -->
+        <div id="trial-banner" class="hidden" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #78350f; padding: 1rem 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.2); font-size: 0.9rem; font-weight: 600; flex-wrap: wrap; gap: 0.75rem">
+            <div style="display: flex; align-items: center; gap: 0.75rem">
+                <span style="font-size: 1.5rem">⏳</span>
+                <div>
+                    <p style="margin: 0; font-weight: 800; font-size: 1rem">Mode Percobaan (Trial 3 Hari)</p>
+                    <p style="margin: 0; font-size: 0.85rem; opacity: 0.9">Anda menggunakan versi trial. Sisa waktu Anda: <span id="trial-time-left" style="font-weight: 800; text-decoration: underline">3 Hari</span>. Fitur Export/Import dinonaktifkan.</p>
+                </div>
+            </div>
+            <button onclick="openActivationModal()" style="background: #78350f; color: white; border: none; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.2s">🔑 Aktifkan Lisensi Penuh</button>
+        </div>
         
         <!-- Setup TP & CP View -->
         <section id="setup-tp" class="view hidden">
@@ -285,15 +301,31 @@
 
             <!-- Database Backup Card -->
             <div class="card" style="max-width: 800px; background: #f8fafc; border: 1px solid #e2e8f0">
-                <div style="display: flex; justify-content: space-between; align-items: center">
+                <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem">
                     <div>
-                        <h3 style="margin: 0; font-size: 1.1rem">💾 Manajemen Database (Excel)</h3>
-                        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem">Cadangkan seluruh data aplikasi ke file Excel.</p>
+                        <h3 style="margin: 0; font-size: 1.1rem">💾 Cadangkan / Pulihkan Sistem (JSON) <span style="font-size: 0.75rem; background: #ea580c; color: white; padding: 2px 6px; border-radius: 4px; font-weight: 800">Rekomendasi Pindah PC</span></h3>
+                        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem">Memindahkan 100% data aplikasi (Logo, Judul P5, TP, Absensi, & Catatan Wali) tanpa ada yang hilang.</p>
                     </div>
                     <div style="display: flex; gap: 1rem">
-                        <button onclick="exportAllDataExcel()" style="background: #10b981; padding: 0.6rem 1.2rem; font-size: 0.85rem">📥 Export Lengkap</button>
+                        <button onclick="exportSystemBackupJSON()" style="background: #ea580c; padding: 0.6rem 1.2rem; font-size: 0.85rem; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer">📥 Backup Sistem (.json)</button>
                         <div style="position: relative">
-                            <button style="background: var(--primary); padding: 0.6rem 1.2rem; font-size: 0.85rem">📤 Import Database</button>
+                            <button style="background: #4f46e5; padding: 0.6rem 1.2rem; font-size: 0.85rem; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer">📤 Restore Sistem</button>
+                            <input type="file" id="import-json-db" accept=".json" onchange="importSystemBackupJSON(this)" style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer">
+                        </div>
+                    </div>
+                </div>
+                
+                <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 1.5rem 0">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem">
+                    <div>
+                        <h3 style="margin: 0; font-size: 1.1rem">📊 Cadangkan Data Siswa (Excel)</h3>
+                        <p style="font-size: 0.75rem; color: #64748b; margin-top: 0.2rem">Export/Import data profil siswa, nilai akhir, dan nilai P5 untuk diolah di Excel.</p>
+                    </div>
+                    <div style="display: flex; gap: 1rem">
+                        <button onclick="exportAllDataExcel()" style="background: #10b981; padding: 0.6rem 1.2rem; font-size: 0.85rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; color: white">📥 Export Lengkap</button>
+                        <div style="position: relative">
+                            <button style="background: var(--primary); padding: 0.6rem 1.2rem; font-size: 0.85rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; color: white">📤 Import Database</button>
                             <input type="file" id="import-excel-db" accept=".xlsx, .xls" onchange="importAllDataExcel(this)" style="position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer">
                         </div>
                     </div>
