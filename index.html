@@ -96,13 +96,18 @@
                     }
                     
                     // Sembunyikan layar loading secara halus setelah DOM siap
-                    document.addEventListener('DOMContentLoaded', () => {
+                    const hideLoader = () => {
                         const loader = document.getElementById('secure-loading-screen');
                         if (loader) {
                             loader.style.opacity = '0';
                             setTimeout(() => loader.remove(), 500);
                         }
-                    });
+                    };
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', hideLoader);
+                    } else {
+                        hideLoader();
+                    }
                 })
                 .catch(err => {
                     console.error("Gagal terhubung ke SQLite:", err);
