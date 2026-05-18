@@ -33,9 +33,131 @@
         .hidden {
             display: none !important;
         }
+
+        /* Secure Blocker Screens */
+        #secure-loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #0f172a;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.5s ease;
+        }
+        #migration-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.98);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(12px);
+            font-family: 'Inter', sans-serif;
+        }
+        .migration-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+            text-align: center;
+            color: #1e293b;
+            border: 3px solid #ef4444;
+        }
     </style>
+    <script>
+        (function() {
+            // Cek status database dan verifikasi tanda tangan hardware
+            fetch('http://localhost:3000/api/db/get-all')
+                .then(res => res.json())
+                .then(res => {
+                    if (res.needsMigration) {
+                        // Tampilkan overlay migrasi perangkat baru
+                        document.getElementById('secure-loading-screen')?.classList.add('hidden');
+                        document.getElementById('migration-overlay')?.classList.remove('hidden');
+                        document.getElementById('migration-owner').textContent = res.ownerName;
+                        document.getElementById('migration-device').textContent = res.oldDeviceId;
+                        localStorage.clear(); // Hapus cache lokal agar tidak bocor
+                        return;
+                    }
+                    
+                    // Jika sukses, sinkronisasikan data terdekripsi ke localStorage
+                    if (res.data) {
+                        Object.entries(res.data).forEach(([key, val]) => {
+                            if (val === null || val === undefined) return;
+                            localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val));
+                        });
+                    }
+                    
+                    // Sembunyikan layar loading secara halus setelah DOM siap
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const loader = document.getElementById('secure-loading-screen');
+                        if (loader) {
+                            loader.style.opacity = '0';
+                            setTimeout(() => loader.remove(), 500);
+                        }
+                    });
+                })
+                .catch(err => {
+                    console.error("Gagal terhubung ke SQLite:", err);
+                    const title = document.getElementById('secure-loading-title');
+                    const desc = document.getElementById('secure-loading-desc');
+                    const btn = document.getElementById('secure-loading-error-btn');
+                    
+                    if (title && desc && btn) {
+                        title.textContent = "🔌 SERVER TIDAK TERDETEKSI";
+                        title.style.color = "#f59e0b";
+                        desc.innerHTML = "Jalankan backend server lokal (<b>npm start</b>) terlebih dahulu<br>untuk dapat mengakses database SQLite lokal yang terenkripsi.";
+                        btn.classList.remove('hidden');
+                    }
+                });
+        })();
+    </script>
 </head>
 <body onload="checkActivation()">
+
+    <!-- Layar Blocker Loading Awal -->
+    <div id="secure-loading-screen">
+        <div style="font-size: 3.5rem; margin-bottom: 1.5rem; animation: pulse 2s infinite">🛡️</div>
+        <h2 id="secure-loading-title" style="margin: 0; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem">Menghubungkan ke Secure SQLite...</h2>
+        <p id="secure-loading-desc" style="margin: 0; color: #94a3b8; font-size: 0.9rem">Memverifikasi tanda tangan perangkat keras (Motherboard UUID) secara aman...</p>
+        <div id="secure-loading-error-btn" class="hidden" style="margin-top: 1.5rem">
+            <button onclick="location.reload()" style="background: #f59e0b; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.9rem">Coba Hubungkan Kembali</button>
+        </div>
+    </div>
+
+    <!-- Modal Migrasi Perangkat (PC Baru Terdeteksi) -->
+    <div id="migration-overlay" class="hidden">
+        <div class="migration-card">
+            <div style="font-size: 3rem; margin-bottom: 1rem">🛡️</div>
+            <h2 style="margin-bottom: 0.5rem; color: #ef4444">Perangkat Baru Terdeteksi!</h2>
+            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 2.0rem; line-height: 1.5">
+                Database terdeteksi berasal dari perangkat PC/Laptop lain. Untuk memulihkan data backup Anda di perangkat baru ini, harap lakukan otorisasi re-aktivasi perangkat.
+            </p>
+            
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: left; font-size: 0.85rem">
+                <p style="margin: 0 0 0.5rem 0; color: #64748b"><b>Data Pemilik Database:</b></p>
+                <p style="margin: 0 0 0.3rem 0; color: #334155">Nama Guru: <b id="migration-owner">-</b></p>
+                <p style="margin: 0; color: #334155">Device ID Lama: <b id="migration-device" style="font-family: monospace">-</b></p>
+            </div>
+
+            <div style="text-align: left; margin-bottom: 1.5rem">
+                <label style="display: block; font-size: 0.75rem; font-weight: 600; margin-bottom: 0.3rem">Masukkan Nomor Seri Aktivasi Anda (Lama/Asli)</label>
+                <input type="text" id="migration-serial-key" placeholder="Contoh: A1B2-C3D4" style="width: 100%; padding: 0.75rem; border: 2px solid #ef4444; border-radius: 8px; font-family: monospace; font-size: 1.1rem; text-align: center; color: #ef4444">
+            </div>
+            
+            <button onclick="handleDatabaseMigration()" style="width: 100%; padding: 1rem; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1.1rem; box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3)">
+                Otorisasi & Pulihkan Database
+            </button>
+            <p style="margin-top: 1.5rem; font-size: 0.75rem; color: #64748b; line-height: 1.4">⚠️ Database akan terenkripsi ulang secara aman menggunakan tanda tangan motherboard baru di PC ini setelah otorisasi berhasil.</p>
+        </div>
+    </div>
 
     <!-- Modal Aktivasi Pertama Kali -->
     <div id="activation-overlay" class="hidden">
