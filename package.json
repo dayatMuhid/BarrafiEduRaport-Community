@@ -1,6 +1,6 @@
 {
   "name": "kurikulum-merdeka-raport",
-  "version": "1.0.0",
+  "version": "1.2.4",
   "main": "script.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
